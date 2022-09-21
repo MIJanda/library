@@ -32,4 +32,56 @@ class BookReservationTest extends TestCase
         // 4. assert that there's only 1 book posted
         $this->assertCount(1, Book::all());
     }
+
+    /**
+     * @test
+     * */
+    public function a_title_is_required()
+    {
+        // $this->withoutExceptionHandling();
+
+        $response = $this->post('/books', [
+            'title' => '',
+            'author' => 'HXANT'
+        ]);
+
+        $response->assertSessionHasErrors('title');
+    }
+
+    /**
+     * @test
+     */
+    public function an_author_is_required()
+    {
+        $response = $this->post('/books', [
+            'title' => 'Cool Book Title',
+            'author' => ''
+        ]);
+
+        $response->assertSessionHasErrors('author');
+    }
+
+    /**
+     * @test
+     */
+    public function a_book_can_be_updated()
+    {
+        $this->withoutExceptionHandling();
+
+        $this->post('/books', [
+            'title' => 'Cool Book Title',
+            'author' => 'HXANT'
+        ]);
+
+        $book = Book::first();
+
+        $response = $this->patch('/books/' . $book->id, [
+            'title' => 'New Book Title',
+            'author' => 'New Book Author'
+        ]);
+
+        $this->assertEquals('New Book Title', Book::first()->title);
+        $this->assertEquals('New Book Author', Book::first()->author);
+    }
 }
+

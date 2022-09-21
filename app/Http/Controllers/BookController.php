@@ -7,10 +7,18 @@ use App\Models\Book;
 
 class BookController extends Controller
 {
-    public function store() {
-        Book::create([
-            'title' => request('title'),
-            'author' => request('author')
+    public function store() {        
+        Book::create($this->validateRequest());
+    }
+
+    public function update(Book $book) {
+        $book->update($this->validateRequest());
+    }
+
+    protected function validateRequest() {
+        return request()->validate([
+            'title' => 'required',
+            'author' => 'required'
         ]);
     }
 }
