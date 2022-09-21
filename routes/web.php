@@ -15,4 +15,5 @@ use App\Http\Controllers\BookController;
 */
 
 Route::post('/books', [BookController::class, 'store']);
-// Route::post('/books', 'BookController@store');
+
+Route::patch('/books/{book}', [BookController::class, 'update']);
