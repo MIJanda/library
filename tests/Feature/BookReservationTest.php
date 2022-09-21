@@ -13,12 +13,11 @@ class BookReservationTest extends TestCase
 
     /**
      * @test
-     *
      */
     public function a_book_can_be_added_to_the_library()
     {
         // 3. disable exception bubbling
-        $this->withoutExceptionHandling();
+        // $this->withoutExceptionHandling();
 
         // 1. response object after a POST request
         $response = $this->post('/books', [
@@ -26,11 +25,12 @@ class BookReservationTest extends TestCase
             'author' => 'HXANT'
         ]);
 
-        // 2. assert that the response was successful
-        $response->assertOk();
+        $book = Book::first();
 
         // 4. assert that there's only 1 book posted
         $this->assertCount(1, Book::all());
+
+        $response->assertRedirect($book->path());
     }
 
     /**
@@ -66,7 +66,7 @@ class BookReservationTest extends TestCase
      */
     public function a_book_can_be_updated()
     {
-        $this->withoutExceptionHandling();
+        // $this->withoutExceptionHandling();
 
         $this->post('/books', [
             'title' => 'Cool Book Title',
@@ -75,13 +75,39 @@ class BookReservationTest extends TestCase
 
         $book = Book::first();
 
-        $response = $this->patch('/books/' . $book->id, [
+        $response = $this->patch($book->path(), [
             'title' => 'New Book Title',
             'author' => 'New Book Author'
         ]);
 
         $this->assertEquals('New Book Title', Book::first()->title);
         $this->assertEquals('New Book Author', Book::first()->author);
+
+        $response->assertRedirect($book->fresh()->path());
+    }
+
+    /** 
+    * @test
+    */
+    public function a_book_can_be_deleted()
+    {
+        $this->withoutExceptionHandling();
+
+        $this->post('/books', [
+            'title' => 'New Bk Title',
+            'author' => 'New Bk Author'
+        ]);
+
+        $book = Book::first();
+        
+        $this->assertCount(1, Book::all());
+
+        $response = $this->delete($book->path());
+
+        $this->assertCount(0, Book::all());
+
+        $response->assertRedirect('/books');
+
     }
 }
 
