@@ -6,7 +6,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 use App\Models\Book;
 
-class BookReservationTest extends TestCase
+class BookManagementTest extends TestCase
 {
     // 5. start off with a fresh slate DB before each and every test case
     use RefreshDatabase;
@@ -91,8 +91,6 @@ class BookReservationTest extends TestCase
     */
     public function a_book_can_be_deleted()
     {
-        $this->withoutExceptionHandling();
-
         $this->post('/books', [
             'title' => 'New Bk Title',
             'author' => 'New Bk Author'
